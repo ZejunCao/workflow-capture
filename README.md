@@ -1,53 +1,5 @@
 # workflow-capture
 
-**English** | [中文](#中文)
-
----
-
-## English
-
-### What is this?
-
-A Claude Skill that does two things at once:
-1. **Executes** your task step by step, pausing to ask you when things go wrong
-2. **Captures** the entire process — including errors and fixes — into a reusable `SKILL.md` workflow file
-
-Next time you need to do the same task, load the generated Skill and Claude follows the proven steps directly. No more trial and error.
-
-### How to trigger it
-
-Say something like:
-- _"Help me set up X, and record the steps for next time"_
-- _"Do this task and save it as a reusable workflow"_
-- _"Capture this process as a skill"_
-- _"Help me deploy X and document it"_
-
-It will **not** trigger on regular tasks — only when you explicitly ask to record the process.
-
-### What you get
-
-After each session, Claude generates a `SKILL.md` file containing:
-- ✅ Complete step-by-step instructions
-- ⚠️ Common pitfalls with fixes (from real errors in your session)
-- 🔧 Copy-paste commands and code snippets
-- 📋 A troubleshooting table for every error encountered
-- 🔄 Variant notes for different environments
-
-### Installation
-
-**Claude.ai users:**
-1. Download `workflow-capture.skill` from [Releases](../../releases)
-2. Upload it at the start of a Claude.ai conversation
-
-**Claude Code users:**
-```bash
-/plugin marketplace add YOUR_USERNAME/workflow-capture
-```
-
----
-
-## 中文
-
 ### 这是什么？
 
 一个 Claude Skill，同时完成两件事：
@@ -80,32 +32,24 @@ After each session, Claude generates a `SKILL.md` file containing:
 **Claude.ai 用户：**
 1. 从 [Releases](../../releases) 下载 `workflow-capture.skill`
 2. 在 Claude.ai 对话开始时上传该文件
+3. 会话中根据 README 的“如何触发”示例话术来调用此 skill
 
 **Claude Code 用户：**
 ```bash
 /plugin marketplace add YOUR_USERNAME/workflow-capture
 ```
 
-### 多语言支持
-
-- 英文版：[`workflow-capture/SKILL.md`](workflow-capture/SKILL.md)
-- 中文版：[`i18n/SKILL.zh.md`](i18n/SKILL.zh.md)
-
-Claude 会根据你使用的语言，自动用对应语言生成输出的工作流 Skill。
-
 ---
 
-## File Structure | 目录结构
+## 目录结构
 
 ```
 workflow-capture/
-├── README.md                        # This file | 本文件
+├── README.md                        # 本文件（中文说明）
 ├── workflow-capture/
-│   └── SKILL.md                     # English skill (default)
-├── i18n/
-│   └── SKILL.zh.md                  # 中文版 skill
+│   └── SKILL.md                     # 默认中文 skill
 └── .claude-plugin/
-    └── marketplace.json             # Plugin marketplace config
+    └── marketplace.json             # 插件市场配置
 ```
 
 ## License

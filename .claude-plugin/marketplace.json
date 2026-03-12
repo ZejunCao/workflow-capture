@@ -1,0 +1,16 @@
+{
+  "name": "workflow-capture",
+  "version": "1.0.0",
+  "description": "Execute any task while automatically capturing the process as a reusable Skill workflow.",
+  "plugins": [
+    {
+      "name": "workflow-capture",
+      "source": {
+        "type": "github",
+        "repo": "YOUR_USERNAME/workflow-capture"
+      },
+      "description": "Execute a task and capture the process as a reusable workflow Skill. Triggers when user wants to do a task AND record the steps for future reuse.",
+      "tags": ["workflow", "automation", "productivity", "documentation", "reusable"]
+    }
+  ]
+}

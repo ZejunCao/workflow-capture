@@ -1,142 +1,143 @@
 ---
 name: workflow-capture
 description: |
-  Use this skill when the user explicitly wants to execute a complex or unfamiliar task AND capture the process as a reusable workflow. Triggers when the user says things like "help me do X and record the steps", "do this task and save it as a workflow", "capture this process for reuse", "record this as a skill", "do X and document it for next time", or any combination of executing a task + wanting to save the steps for future use.
+  当用户明确想要执行一项复杂或不熟悉的任务，并且想把过程记录为可复用工作流时，使用此 skill。触发短语包括："帮我做XXX，并记录下来下次用"、"我想边做边记录工作流"、"做完之后生成一个skill"、"帮我完成X并保存步骤"、"记录这个流程供以后用"，或任何"执行任务 + 想要保存步骤"的组合表达。
 
-  Do NOT trigger for ordinary tasks where the user just wants the result. ONLY trigger when the user explicitly signals they want the process recorded/captured/saved.
+  不要在用户只是想完成普通任务时触发。只有当用户明确表示想要记录/捕获/保存过程时，才触发此 skill。
 ---
 
-# Workflow Capture
+# 工作流捕获（Workflow Capture）
 
-This skill does two things in sequence:
-1. **Execute** a task with interactive error recovery, tracking every step
-2. **Crystallize** the experience into a reusable SKILL.md file
-
----
-
-## Phase 1: Task Setup
-
-Before starting, briefly confirm scope with the user (2-3 questions max):
-
-- What is the end goal of this task?
-- Any known constraints or environment details? (OS, language, file formats, etc.)
-- What should the output Skill be named?
-
-Then announce:
-> _"Got it. I'll execute step by step and track everything. If something goes wrong, I'll pause and check with you. When we're done, I'll turn the whole experience into a reusable Skill."_
+此 skill 按顺序完成两件事：
+1. **执行**任务，带有交互式错误恢复机制，追踪每一步
+2. **提炼**经验，生成可复用的 SKILL.md 文件
 
 ---
 
-## Phase 2: Execution with Step Tracking
+## 第一阶段：任务准备
 
-Maintain an internal **Step Log** as you work:
+开始前，简短确认范围（最多 2-3 个问题）：
+
+- 这项任务的最终目标是什么？
+- 有哪些已知约束或环境信息？（操作系统、语言、文件格式等）
+- 生成的 Skill 想叫什么名字？
+
+然后告知用户：
+> _"好的，我会一步步执行并记录全过程。遇到问题我会暂停和你确认。完成后，我会把这次经验整理成可复用的 Skill。"_
+
+---
+
+## 第二阶段：带步骤追踪的执行
+
+执行过程中，在内部维护一份**步骤日志**：
 
 ```
-Step N: [what you're doing]
-Status: ✅ success / ❌ failed / ⚠️ workaround
-Notes: [important context, caveats, or parameter values]
-Error (if any): [exact error or failure description]
-Fix Applied: [what resolved it]
+步骤 N：[正在做什么]
+状态：✅ 成功 / ❌ 失败 / ⚠️ 变通解决
+备注：[重要上下文、注意事项、参数值]
+错误（如有）：[精确的错误描述]
+修复方式：[是什么解决了问题]
 ```
 
-### Error Handling Protocol
+### 错误处理协议
 
-When a step fails, **pause immediately** and surface it:
+某步骤失败时，**立即暂停**并向用户说明：
 
-> ❌ **Step N failed**
-> Problem: [concise description]
-> Likely cause: [1-2 guesses]
-> My suggestion: [recommended fix]
-> How would you like to proceed?
+> ❌ **步骤 N 遇到问题**
+> 问题：[简洁描述]
+> 可能原因：[1-2 个猜测]
+> 我的建议：[推荐的解决方向]
+> 你希望怎么做？
 
-User options:
-- Confirm suggested fix → apply and continue
-- Provide their own fix → apply it, note it in the log
-- "Skip this step" → mark skipped, continue
-- "Stop here" → proceed to Phase 3 with partial results
+用户的选项：
+- 确认你的建议 → 执行并继续
+- 提供他们自己的修复方案 → 执行，记录到日志
+- "跳过这步" → 标记为跳过，继续
+- "停在这里" → 带着已有结果进入第三阶段
 
-**Never silently retry more than once.** Always surface to the user after the first failed auto-retry.
+**不要静默重试超过一次。** 第一次自动重试失败后，必须告知用户。
 
-### Progress Updates
+### 进度更新
 
-After each successful step:
-> ✅ Step N done: [one-line summary] | Next: [what's coming]
+每步成功后：
+> ✅ 步骤 N 完成：[一行描述] | 下一步：[接下来要做什么]
 
 ---
 
-## Phase 3: Skill Generation
+## 第三阶段：生成 Skill
 
-Once the task is complete (or the user decides to stop):
+任务完成（或用户决定停止）后：
 
-> 🎉 Done! Let me turn this experience into a reusable Skill.
+> 🎉 任务完成！我来把这次的经验整理成可复用的 Skill。
 
-Generate a `SKILL.md` based on the Step Log:
+根据步骤日志生成 `SKILL.md`：
 
 ```markdown
 ---
-name: [task-name-in-kebab-case]
+name: [任务名称-用英文短横线格式]
 description: |
-  Use this skill when the user wants to [task description].
-  Triggers on phrases like: [3-5 example trigger phrases].
+  当用户想要 [任务描述] 时使用此 skill。
+  触发短语示例：[根据实际任务写 3-5 个触发短语]
 ---
 
-# [Task Name]
+# [任务名称]
 
-## Prerequisites
-[Environment, tools, and parameters needed before starting — learned from this session]
+## 前置准备
+[开始前需要的环境、工具和参数 —— 从本次执行中学到的]
 
-## Steps
+## 执行步骤
 
-### Step 1: [Name]
-[What to do]
+### 步骤 1：[名称]
+[做什么]
 
-⚠️ **Common pitfall**: [document any error + fix encountered here]
-💡 **Note**: [caveats or conditions]
+⚠️ **常见坑**：[记录此步骤遇到的错误及修复方式]
+💡 **注意**：[注意事项或条件]
 
-### Step 2: [Name]
+### 步骤 2：[名称]
 ...
 
-## Reusable Snippets
-[Commands, code, or configs used verbatim — ready to copy-paste]
+## 可复用片段
+[执行中用到的命令、代码或配置 —— 可直接复制使用]
 
-## Troubleshooting
+## 故障排查
 
-| Symptom | Cause | Fix |
-|---------|-------|-----|
-| ...     | ...   | ... |
+| 错误现象 | 原因 | 解决方法 |
+|--------|------|--------|
+| ...    | ...  | ...    |
 
-## Variants
-[Variations based on OS, file type, environment, etc.]
+## 变体说明
+[基于操作系统、文件类型、环境等的变体情况]
 ```
 
-### Quality Rules
+### 生成质量准则
 
-- **Be specific, not generic** — reflect what actually happened, not textbook theory
-- **Errors are first-class content** — every error + fix must appear both inline and in the troubleshooting table
-- **Make parameters explicit** — replace specific values with `[REPLACE: description]`
-- **Keep steps atomic** — one action per step; use sub-bullets for sub-actions
-
----
-
-## Phase 4: Review & Save
-
-Present the draft and ask:
-
-> Here's the Skill generated from this session. You can:
-> - Save it as-is
-> - Tell me what to change
-> - Ask me to expand any step
-
-After confirmation, save as `[skill-name]/SKILL.md` and offer download.
-
-> _"Next time, upload this file at the start of a conversation and I'll follow the workflow directly — no more trial and error."_
+- **具体而非泛泛** —— 反映实际发生的事，而非教科书式步骤
+- **错误是一等内容** —— 每个错误和修复都要出现在步骤内联说明和故障排查表中
+- **参数必须明确** —— 将具体值替换为 `[替换：描述]` 占位符
+- **步骤保持原子性** —— 每步一个动作；子操作用缩进列表
 
 ---
 
-## Notes for Claude
+## 第四阶段：审阅与保存
 
-- **The skill is a side-effect, not the goal.** Complete the task well first; logging is secondary.
-- **Log internally, surface selectively.** Only show the user status updates and error pauses — don't dump raw logs.
-- **Generalize on generation.** Specific values from execution (e.g., `192.168.1.1`) become `[REPLACE: server IP]` in the output skill.
-- **One skill per task type.** If two distinct tasks were run, offer two separate Skill files.
-- **Language matching.** Generate the output Skill in the same language the user communicated in.
+展示草稿并询问：
+
+> 这是根据本次执行生成的 Skill 草稿。你可以：
+> - 直接保存使用
+> - 告诉我哪里需要修改
+> - 让我补充某个步骤的细节
+
+确认后，保存为 `[skill名称]/SKILL.md` 并提供下载。
+
+> _"下次把这个文件上传到对话开头，我就会直接按照这个工作流执行 —— 不用再走弯路了。"_
+
+---
+
+## Claude 注意事项
+
+- **Skill 是副产品，不是目标。** 首要任务是把事情做好，记录是次要的。
+- **内部记录，有选择地展示。** 只向用户展示状态更新和错误暂停，不要倾泻原始日志。
+- **生成时要泛化。** 执行时的具体值（如 `192.168.1.1`）在输出 skill 中变为 `[替换：服务器IP]`。
+- **一种任务一个 Skill。** 如果一次会话中运行了两种不同任务，提供两个独立的 Skill 文件。
+- **语言匹配。** 用用户沟通时使用的语言生成输出 Skill。
+
